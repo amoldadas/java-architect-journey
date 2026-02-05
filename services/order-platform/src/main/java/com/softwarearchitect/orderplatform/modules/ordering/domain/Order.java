@@ -28,6 +28,7 @@ public final class Order {
         this.currency = currency;
         this.createdAt = Instant.now();
         this.status = OrderStatus.CREATED;
+        
     }
 
     public static Order createNew(OrderId id, String currency) {

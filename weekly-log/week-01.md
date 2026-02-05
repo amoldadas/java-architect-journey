@@ -20,6 +20,10 @@
 - ADR-001 created
 - C4 context diagram drafted
 - Repository structure initialized
+- Domain skeleton created (Order, Money, IDs)
+- State machine tested
+- Module boundary rules documented
+- Added ArchUnit to restrict other domain imports
 
 ## Key Decisions
 - Start as modular monolith, split later
