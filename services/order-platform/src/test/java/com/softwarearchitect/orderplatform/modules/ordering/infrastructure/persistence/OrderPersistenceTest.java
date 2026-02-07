@@ -16,6 +16,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,14 +25,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class OrderPersistenceTest extends PostgresContainers {
 
+    static {
+        // Postgres container rejects "Asia/Calcutta"; use UTC so JDBC connection succeeds.
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry r) {
         r.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         r.add("spring.datasource.username", POSTGRES::getUsername);
         r.add("spring.datasource.password", POSTGRES::getPassword);
-
-        r.add("spring.flyway.enabled", () -> "true");
-        r.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+        r.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+        r.add("spring.flyway.enabled", () -> "false");
+        r.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
     }
 
     @Autowired
