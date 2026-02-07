@@ -1,3 +1,19 @@
 spring:
   application:
     name: order-platform
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order_platform
+    username: order_platform
+    password: order_platform
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug

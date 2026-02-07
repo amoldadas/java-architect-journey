@@ -12,7 +12,7 @@ import java.util.Objects;
 public final class Order {
 
     private final OrderId id;
-    private final Instant createdAt;
+    private Instant createdAt;
     private OrderStatus status;
     private final List<OrderItem> items = new ArrayList<>();
     private final String currency;
@@ -105,5 +105,20 @@ public final class Order {
     public List<OrderItem> items() { return List.copyOf(items); }
     public String currency() { return currency; }
     public String paidPaymentReference() { return paidPaymentReference; }
+    public static Order rehydrate(OrderId id, String currency, Instant createdAt, OrderStatus status, String paidPaymentReference, List<OrderItem> items) {
+        Order o = new Order(id, currency);
+        // override the createdAt set by constructor
+        o.items.clear();
+        o.items.addAll(items);
+        o.status = status;
+        o.paidPaymentReference = paidPaymentReference;
+    
+        // Set createdAt via reflection-free approach: change createdAt field to non-final OR
+        // keep createdAt final and store createdAt in constructor parameter.
+        // BEST: make createdAt non-final and set it here.
+        o.createdAt = createdAt;
+        return o;
+    }
+    
 }
 
