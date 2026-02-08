@@ -67,10 +67,3 @@ class ModuleBoundariesArchTest {
                 .check(classes);
     }
 }
-
-
-
-
-
-
-
