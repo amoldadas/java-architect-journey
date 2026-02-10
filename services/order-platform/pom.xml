@@ -62,6 +62,11 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- PostgreSQL driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -113,27 +118,26 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers-junit-jupiter</artifactId>
-			<version>2.0.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers-postgresql</artifactId>
-			<version>2.0.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	  
 	<build>
 		<plugins>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>--enable-native-access=ALL-UNNAMED</argLine>
-					<environmentVariables>
+					<argLine>-Duser.timezone=UTC --enable-native-access=ALL-UNNAMED</argLine>
+					<!--<environmentVariables>
 						<DOCKER_HOST>tcp://127.0.0.1:2375</DOCKER_HOST>
-					</environmentVariables>
+					</environmentVariables>-->
 				</configuration>
 			</plugin>
 			  

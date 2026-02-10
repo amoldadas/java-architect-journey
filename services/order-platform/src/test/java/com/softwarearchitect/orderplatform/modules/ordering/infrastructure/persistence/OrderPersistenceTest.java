@@ -5,39 +5,41 @@ import com.softwarearchitect.orderplatform.modules.ordering.domain.OrderItem;
 import com.softwarearchitect.orderplatform.shared.domain.Money;
 import com.softwarearchitect.orderplatform.shared.domain.ids.OrderId;
 import com.softwarearchitect.orderplatform.shared.domain.ids.ProductId;
+import com.softwarearchitect.orderplatform.testsupport.FlywayTestContextInitializer;
 import com.softwarearchitect.orderplatform.testsupport.PostgresContainers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
-import java.util.TimeZone;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@ContextConfiguration(initializers = FlywayTestContextInitializer.class)
 class OrderPersistenceTest extends PostgresContainers {
-
-    static {
-        // Postgres container rejects "Asia/Calcutta"; use UTC so JDBC connection succeeds.
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry r) {
         r.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         r.add("spring.datasource.username", POSTGRES::getUsername);
         r.add("spring.datasource.password", POSTGRES::getPassword);
-        r.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+
         r.add("spring.flyway.enabled", () -> "false");
-        r.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        r.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+
+        // safest timezone fix (no global JVM change)
+        r.add("spring.jpa.properties.hibernate.jdbc.time_zone", () -> "UTC");
+        //r.add("spring.datasource.hikari.connection-init-sql", () -> "SET TIME ZONE 'UTC'");
     }
 
     @Autowired
